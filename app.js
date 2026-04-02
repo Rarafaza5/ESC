@@ -9,67 +9,72 @@ const nameInput = document.getElementById('name');
 const discordInput = document.getElementById('discord');
 const successSound = document.getElementById('success-sound');
 
-// Deadline Configuration
-let registrationOpenDate = null;
-let registrationDeadline = null;
-let cancellationDeadline = null;
+// Registration Configuration
+let isRegistrationOpen = false;
+let openDate = null;
+let closeDate = null;
+let cancelDate = null;
 
-// Load deadlines from Firestore
-async function loadDeadlines() {
+// Load registration status from Firestore
+async function loadRegistrationStatus() {
   try {
-    const deadlineDoc = await db.collection('config').doc('deadlines').get();
-    if (deadlineDoc.exists) {
-      const data = deadlineDoc.data();
-      registrationOpenDate = data.registrationOpenDate?.toDate();
-      registrationDeadline = data.registrationDeadline?.toDate();
-      cancellationDeadline = data.cancellationDeadline?.toDate();
-      checkDeadlinesAndUpdateUI();
+    const configDoc = await db.collection('config').doc('registration').get();
+    if (configDoc.exists) {
+      const data = configDoc.data();
+      isRegistrationOpen = data.isOpen || false;
+      openDate = data.openDate?.toDate() || null;
+      closeDate = data.closeDate?.toDate() || null;
+      cancelDate = data.cancelDate?.toDate() || null;
+      checkRegistrationStatus();
     }
   } catch (error) {
-    console.error('Error loading deadlines:', error);
+    console.error('Error loading registration status:', error);
   }
 }
 
-// Check deadlines and update UI accordingly
-function checkDeadlinesAndUpdateUI() {
+// Check registration status and update UI
+function checkRegistrationStatus() {
   const now = new Date();
   
-  // Check if registrations have opened yet
-  if (registrationOpenDate) {
-    const timeUntilOpen = registrationOpenDate - now;
-    if (timeUntilOpen > 0) {
-      // Registrations haven't opened yet
-      const daysUntilOpen = Math.ceil(timeUntilOpen / (1000 * 60 * 60 * 24));
-      const hoursUntilOpen = Math.ceil(timeUntilOpen / (1000 * 60 * 60));
-      
-      let message;
-      if (daysUntilOpen > 1) {
-        message = `As inscrições ainda não estão abertas. Abrem em ${daysUntilOpen} dias.`;
-      } else if (hoursUntilOpen > 1) {
-        message = `As inscrições abrem em menos de ${hoursUntilOpen} horas.`;
-      } else {
-        message = `As inscrições abrem em breve!`;
-      }
-      
-      disableRegistrationForm(message, true);
-      return;
-    }
+  // Check if manually closed first
+  if (!isRegistrationOpen) {
+    let message = 'As inscrições estão temporariamente fechadas.';
+    disableRegistrationForm(message, true);
+    return;
   }
   
-  // Check registration deadline
-  if (registrationDeadline) {
-    const timeUntilRegistrationDeadline = registrationDeadline - now;
-    const hoursUntilRegistration = timeUntilRegistrationDeadline / (1000 * 60 * 60);
+  // If open, check opening date (if set and in future, show countdown)
+  if (openDate && openDate > now) {
+    const daysUntil = Math.ceil((openDate - now) / (1000 * 60 * 60 * 24));
+    const hoursUntil = Math.ceil((openDate - now) / (1000 * 60 * 60));
     
-    if (timeUntilRegistrationDeadline <= 0) {
-      // Registration deadline passed - disable form
+    let message;
+    if (daysUntil > 1) {
+      message = `As inscrições abrem em ${daysUntil} dias.`;
+    } else if (hoursUntil > 1) {
+      message = `As inscrições abrem em ${hoursUntil} horas.`;
+    } else {
+      message = `As inscrições abrem em breve!`;
+    }
+    
+    disableRegistrationForm(message, true);
+    return;
+  }
+  
+  // Check closing date
+  if (closeDate) {
+    const timeUntilClose = closeDate - now;
+    const hoursUntil = timeUntilClose / (1000 * 60 * 60);
+    
+    if (timeUntilClose <= 0) {
+      // Closing date passed - disable form
       disableRegistrationForm('O prazo de inscrição terminou. Não é mais possível realizar inscrições.');
-    } else if (hoursUntilRegistration <= 24 && hoursUntilRegistration > 0) {
+    } else if (hoursUntil <= 24 && hoursUntil > 0) {
       // Less than 24 hours - show warning
-      showDeadlineWarning(`Atenção: O prazo de inscrição termina em menos de ${Math.ceil(hoursUntilRegistration)} horas!`);
-    } else if (hoursUntilRegistration <= 72 && hoursUntilRegistration > 0) {
+      showDeadlineWarning(`Atenção: O prazo de inscrição termina em menos de ${Math.ceil(hoursUntil)} horas!`);
+    } else if (hoursUntil <= 72 && hoursUntil > 0) {
       // Less than 3 days - show warning
-      const days = Math.ceil(hoursUntilRegistration / 24);
+      const days = Math.ceil(hoursUntil / 24);
       showDeadlineWarning(`Atenção: O prazo de inscrição termina em ${days} dias!`);
     }
   }
@@ -134,20 +139,20 @@ function disableRegistrationForm(message, isPreOpening = false) {
 
 // Check if cancellation is still allowed
 async function canCancelRegistration() {
-  if (!cancellationDeadline) {
-    await loadDeadlines();
+  // Load latest data
+  await loadRegistrationStatus();
+  
+  const now = new Date();
+  
+  // Check if cancel date is set and has passed
+  if (cancelDate && now > cancelDate) {
+    return { 
+      allowed: false, 
+      message: 'O prazo para cancelar a inscrição terminou.' 
+    };
   }
   
-  if (cancellationDeadline) {
-    const now = new Date();
-    if (now > cancellationDeadline) {
-      return {
-        allowed: false,
-        message: 'O prazo para cancelar a inscrição terminou.'
-      };
-    }
-  }
-  
+  // Cancellation allowed if date hasn't passed (or no date set)
   return { allowed: true };
 }
 
@@ -235,15 +240,21 @@ function playSuccessAndRedirect() {
 
 // Form submission handler
 if (registrationForm) {
-  // Load deadlines when page loads
-  loadDeadlines();
+  // Load registration status when page loads
+  loadRegistrationStatus();
   
   registrationForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    // Check registration deadline before processing
+    // Check if registrations are open
+    if (!isRegistrationOpen) {
+      showErrors(['As inscrições estão fechadas no momento.']);
+      return;
+    }
+    
+    // Check closing date (optional)
     const now = new Date();
-    if (registrationDeadline && now > registrationDeadline) {
+    if (closeDate && now > closeDate) {
       showErrors(['O prazo de inscrição terminou. Não é mais possível realizar inscrições.']);
       return;
     }

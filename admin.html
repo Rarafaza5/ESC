@@ -83,29 +83,66 @@
     <!-- Admin Dashboard -->
     <div id="admin-dashboard" class="admin-wide-container" style="display: none;">
         <header style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 2rem;">
-            <img src="Logo Festival GA da Canção.png" alt="Festival GA da Canção" style="height: 50px;">
+            <img src="70coração.png" alt="Festival GA da Canção" style="height: 50px;">
             <button onclick="logout()" class="legal-link" style="background: none; border: 1px solid #444; padding: 0.5rem 1.5rem; cursor: pointer;">SAIR</button>
         </header>
 
         <div class="table-responsive">
-            <!-- Deadline Management Section -->
-            <div class="deadline-section" style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
-                <h3 style="color: var(--accent-gold); margin-bottom: 1rem;">Gestão de Prazos</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-                    <div>
-                        <label for="registration-open-date" style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Abertura das Inscrições</label>
-                        <input type="datetime-local" id="registration-open-date" class="input-field" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 0.5rem; border-radius: 4px; color: white;">
+            <!-- Registration Control Section -->
+            <div class="control-section" style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+                <h3 style="color: var(--accent-gold); margin-bottom: 1.5rem; text-align: center;">📅 Gestão de Datas</h3>
+                
+                <!-- Status Display -->
+                <div id="registration-status" style="margin-bottom: 2rem; padding: 1rem; border-radius: 8px; text-align: center; font-weight: 600; font-size: 1.1rem;">
+                    A carregar estado...
+                </div>
+                
+                <!-- Independent Date Controls -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                    <!-- Opening Date -->
+                    <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px;">
+                        <label for="open-date" style="display: block; margin-bottom: 0.5rem; color: var(--accent-gold); font-weight: 600;">🚀 Data de Abertura</label>
+                        <input type="datetime-local" id="open-date" class="input-field" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 0.5rem; border-radius: 4px; color: white; width: 100%; margin-bottom: 0.5rem;">
+                        <button onclick="saveOpenDate()" class="submit-btn" style="background: var(--accent-gold); color: black; padding: 0.4rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; width: 100%;">
+                            💾 Guardar
+                        </button>
                     </div>
-                    <div>
-                        <label for="registration-deadline" style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Prazo de Inscrição</label>
-                        <input type="datetime-local" id="registration-deadline" class="input-field" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 0.5rem; border-radius: 4px; color: white;">
+                    
+                    <!-- Closing Date -->
+                    <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px;">
+                        <label for="close-date" style="display: block; margin-bottom: 0.5rem; color: #dc3545; font-weight: 600;">⏰ Data de Encerramento</label>
+                        <input type="datetime-local" id="close-date" class="input-field" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 0.5rem; border-radius: 4px; color: white; width: 100%; margin-bottom: 0.5rem;">
+                        <button onclick="saveCloseDate()" class="submit-btn" style="background: #dc3545; color: white; padding: 0.4rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; width: 100%;">
+                            💾 Guardar
+                        </button>
                     </div>
-                    <div>
-                        <label for="cancellation-deadline" style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Prazo de Cancelamento</label>
-                        <input type="datetime-local" id="cancellation-deadline" class="input-field" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 0.5rem; border-radius: 4px; color: white;">
+                    
+                    <!-- Cancellation Date -->
+                    <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px;">
+                        <label for="cancel-date" style="display: block; margin-bottom: 0.5rem; color: #fd7e14; font-weight: 600;">🚫 Prazo de Cancelamento</label>
+                        <input type="datetime-local" id="cancel-date" class="input-field" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 0.5rem; border-radius: 4px; color: white; width: 100%; margin-bottom: 0.5rem;">
+                        <button onclick="saveCancelDate()" class="submit-btn" style="background: #fd7e14; color: white; padding: 0.4rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; width: 100%;">
+                            💾 Guardar
+                        </button>
                     </div>
                 </div>
-                <button onclick="saveDeadlines()" class="submit-btn" style="background: var(--accent-gold); color: black; padding: 0.5rem 1.5rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">SALVAR PRAZOS</button>
+                
+                <!-- Manual Control Buttons -->
+                <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem;">
+                    <h4 style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">⚡ Controlo Manual Imediato</h4>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                        <button onclick="openRegistrations()" class="submit-btn" style="background: #28a745; color: white; padding: 0.8rem 2rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">
+                            � ABRIR INSCRIÇÕES
+                        </button>
+                        <button onclick="closeRegistrations()" class="submit-btn" style="background: #dc3545; color: white; padding: 0.8rem 2rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">
+                            � FECHAR INSCRIÇÕES
+                        </button>
+                    </div>
+                </div>
+                
+                <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 1.5rem; font-style: italic; text-align: center;">
+                    Cada data pode ser definida independentemente. As datas são apenas para referência/visualização.
+                </p>
             </div>
 
             <table>

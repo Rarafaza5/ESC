@@ -15,9 +15,10 @@ const AUTH_SESSION_KEY = 'ga_admin_auth';
 
 // State Management
 let isAuthenticated = sessionStorage.getItem(AUTH_SESSION_KEY) === 'true';
-let registrationOpenDate = null;
-let registrationDeadline = null;
-let cancellationDeadline = null;
+let isRegistrationOpen = false;
+let openDate = null;
+let closeDate = null;
+let cancelDate = null;
 
 // ============================================
 // UI MANAGEMENT
@@ -40,7 +41,7 @@ function updateUI() {
 function showDashboard() {
   loginSection.style.display = 'none';
   adminDashboard.style.display = 'block';
-  loadDeadlines();
+  loadRegistrationStatus();
   loadRegistrations();
 }
 
@@ -106,79 +107,198 @@ function showError(message) {
   `;
   errorDiv.textContent = message;
   
-  const formTitle = loginForm.querySelector('.form-title');
-  formTitle.parentNode.insertBefore(errorDiv, formTitle.nextSibling);
-}
-
-// ============================================
-// DEADLINE MANAGEMENT
-// ============================================
-
-/**
- * Loads deadlines from Firestore
- */
-async function loadDeadlines() {
-  try {
-    const deadlineDoc = await db.collection('config').doc('deadlines').get();
-    if (deadlineDoc.exists) {
-      const data = deadlineDoc.data();
-      registrationOpenDate = data.registrationOpenDate;
-      registrationDeadline = data.registrationDeadline;
-      cancellationDeadline = data.cancellationDeadline;
-      updateDeadlineUI();
-    }
-  } catch (error) {
-    console.error('Error loading deadlines:', error);
-  }
-}
-
-/**
- * Updates deadline UI
- */
-function updateDeadlineUI() {
-  const regOpenDateEl = document.getElementById('registration-open-date');
-  const regDeadlineEl = document.getElementById('registration-deadline');
-  const cancelDeadlineEl = document.getElementById('cancellation-deadline');
-  
-  if (regOpenDateEl && registrationOpenDate) {
-    regOpenDateEl.value = new Date(registrationOpenDate).toISOString().slice(0, 16);
-  }
-  
-  if (regDeadlineEl && registrationDeadline) {
-    regDeadlineEl.value = new Date(registrationDeadline).toISOString().slice(0, 16);
-  }
-  
-  if (cancelDeadlineEl && cancellationDeadline) {
-    cancelDeadlineEl.value = new Date(cancellationDeadline).toISOString().slice(0, 16);
-  }
-}
-
-/**
- * Saves deadlines to Firestore
- */
-async function saveDeadlines() {
-  try {
-    const regOpenDate = document.getElementById('registration-open-date').value;
-    const regDeadline = document.getElementById('registration-deadline').value;
-    const cancelDeadline = document.getElementById('cancellation-deadline').value;
-    
-    if (!regOpenDate || !regDeadline || !cancelDeadline) {
-      showError('Por favor, defina todas as datas.');
+  // Try to insert in login form if visible
+  if (loginForm && loginForm.style.display !== 'none') {
+    const formTitle = loginForm.querySelector('.form-title');
+    if (formTitle && formTitle.parentNode) {
+      formTitle.parentNode.insertBefore(errorDiv, formTitle.nextSibling);
       return;
     }
-    
-    await db.collection('config').doc('deadlines').set({
-      registrationOpenDate: new Date(regOpenDate),
-      registrationDeadline: new Date(regDeadline),
-      cancellationDeadline: new Date(cancelDeadline),
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    
-    showSuccess('Datas limite atualizadas com sucesso!');
-    loadDeadlines();
+  }
+  
+  // Otherwise insert in admin dashboard
+  const dashboard = document.getElementById('admin-dashboard');
+  if (dashboard && dashboard.style.display !== 'none') {
+    const header = dashboard.querySelector('header');
+    if (header && header.parentNode) {
+      header.parentNode.insertBefore(errorDiv, header.nextSibling);
+      return;
+    }
+  }
+  
+  // Fallback: append to body
+  document.body.appendChild(errorDiv);
+}
+
+// ============================================
+// REGISTRATION CONTROL
+// ============================================
+
+/**
+ * Loads registration status from Firestore
+ */
+async function loadRegistrationStatus() {
+  try {
+    const configDoc = await db.collection('config').doc('registration').get();
+    if (configDoc.exists) {
+      const data = configDoc.data();
+      isRegistrationOpen = data.isOpen || false;
+      openDate = data.openDate || null;
+      closeDate = data.closeDate || null;
+      cancelDate = data.cancelDate || null;
+      updateStatusUI();
+    } else {
+      isRegistrationOpen = false;
+      updateStatusUI();
+    }
   } catch (error) {
-    console.error('Error saving deadlines:', error);
-    showError('Erro ao salvar datas limite.');
+    console.error('Error loading registration status:', error);
+  }
+}
+
+/**
+ * Updates the status display and date inputs in the admin panel
+ */
+function updateStatusUI() {
+  const statusEl = document.getElementById('registration-status');
+  const openDateEl = document.getElementById('open-date');
+  const closeDateEl = document.getElementById('close-date');
+  const cancelDateEl = document.getElementById('cancel-date');
+  
+  // Update status display
+  if (statusEl) {
+    if (isRegistrationOpen) {
+      statusEl.textContent = '🔓 INSCRIÇÕES ABERTAS';
+      statusEl.style.background = 'rgba(40, 167, 69, 0.2)';
+      statusEl.style.color = '#28a745';
+      statusEl.style.border = '2px solid #28a745';
+    } else {
+      statusEl.textContent = '🔒 INSCRIÇÕES FECHADAS';
+      statusEl.style.background = 'rgba(220, 53, 69, 0.2)';
+      statusEl.style.color = '#dc3545';
+      statusEl.style.border = '2px solid #dc3545';
+    }
+  }
+  
+  // Update date inputs
+  if (openDateEl && openDate && openDate instanceof Date && !isNaN(openDate)) {
+    openDateEl.value = openDate.toISOString().slice(0, 16);
+  }
+  if (closeDateEl && closeDate && closeDate instanceof Date && !isNaN(closeDate)) {
+    closeDateEl.value = closeDate.toISOString().slice(0, 16);
+  }
+  if (cancelDateEl && cancelDate && cancelDate instanceof Date && !isNaN(cancelDate)) {
+    cancelDateEl.value = cancelDate.toISOString().slice(0, 16);
+  }
+}
+
+/**
+ * Saves opening date independently
+ */
+async function saveOpenDate() {
+  try {
+    const value = document.getElementById('open-date').value;
+    await db.collection('config').doc('registration').set({
+      isOpen: isRegistrationOpen,
+      openDate: value ? new Date(value) : null,
+      closeDate: closeDate,
+      cancelDate: cancelDate,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+    
+    openDate = value ? new Date(value) : null;
+    showSuccess('Data de abertura guardada!');
+  } catch (error) {
+    console.error('Error saving open date:', error);
+    showError('Erro ao guardar data de abertura.');
+  }
+}
+
+/**
+ * Saves closing date independently
+ */
+async function saveCloseDate() {
+  try {
+    const value = document.getElementById('close-date').value;
+    await db.collection('config').doc('registration').set({
+      isOpen: isRegistrationOpen,
+      openDate: openDate,
+      closeDate: value ? new Date(value) : null,
+      cancelDate: cancelDate,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+    
+    closeDate = value ? new Date(value) : null;
+    showSuccess('Data de encerramento guardada!');
+  } catch (error) {
+    console.error('Error saving close date:', error);
+    showError('Erro ao guardar data de encerramento.');
+  }
+}
+
+/**
+ * Saves cancellation date independently
+ */
+async function saveCancelDate() {
+  try {
+    const value = document.getElementById('cancel-date').value;
+    await db.collection('config').doc('registration').set({
+      isOpen: isRegistrationOpen,
+      openDate: openDate,
+      closeDate: closeDate,
+      cancelDate: value ? new Date(value) : null,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+    
+    cancelDate = value ? new Date(value) : null;
+    showSuccess('Prazo de cancelamento guardado!');
+  } catch (error) {
+    console.error('Error saving cancel date:', error);
+    showError('Erro ao guardar prazo de cancelamento.');
+  }
+}
+
+/**
+ * Opens registrations manually
+ */
+async function openRegistrations() {
+  try {
+    await db.collection('config').doc('registration').set({
+      isOpen: true,
+      openDate: openDate,
+      closeDate: closeDate,
+      cancelDate: cancelDate,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+    
+    isRegistrationOpen = true;
+    updateStatusUI();
+    showSuccess('Inscrições abertas com sucesso!');
+  } catch (error) {
+    console.error('Error opening registrations:', error);
+    showError('Erro ao abrir inscrições.');
+  }
+}
+
+/**
+ * Closes registrations manually
+ */
+async function closeRegistrations() {
+  try {
+    await db.collection('config').doc('registration').set({
+      isOpen: false,
+      openDate: openDate,
+      closeDate: closeDate,
+      cancelDate: cancelDate,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+    
+    isRegistrationOpen = false;
+    updateStatusUI();
+    showSuccess('Inscrições fechadas com sucesso!');
+  } catch (error) {
+    console.error('Error closing registrations:', error);
+    showError('Erro ao fechar inscrições.');
   }
 }
 
@@ -205,8 +325,12 @@ function showSuccess(message) {
   `;
   successDiv.textContent = message;
   
-  const dashboard = document.querySelector('.admin-dashboard');
-  dashboard.insertBefore(successDiv, dashboard.firstChild);
+  const dashboard = document.getElementById('admin-dashboard');
+  if (dashboard && dashboard.firstChild) {
+    dashboard.insertBefore(successDiv, dashboard.firstChild);
+  } else if (dashboard) {
+    dashboard.appendChild(successDiv);
+  }
   
   setTimeout(() => successDiv.remove(), 3000);
 }
@@ -300,12 +424,40 @@ function createRegistrationRow(data, docId) {
         padding: 0.3rem 0.8rem;
         border-radius: 4px;
         font-size: 0.7rem;
+        margin-right: 0.3rem;
         cursor: pointer;
       ">Cancelar</button>
+      <button onclick="deleteRegistration('${docId}', '${escapeHtml(data.name)}')" class="btn-delete" style="
+        background: #6c757d;
+        color: white;
+        border: none;
+        padding: 0.3rem 0.8rem;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        cursor: pointer;
+      ">Eliminar</button>
     </td>
   `;
   
   return row;
+}
+
+/**
+ * Checks if cancellation is allowed based on cancelDate
+ */
+async function canCancelRegistration() {
+  const now = new Date();
+  
+  // Check if cancel date is set and has passed
+  if (cancelDate && now > cancelDate) {
+    return { 
+      allowed: false, 
+      message: 'O prazo para cancelar a inscrição terminou.' 
+    };
+  }
+  
+  // Cancellation allowed if date hasn't passed (or no date set)
+  return { allowed: true };
 }
 
 /**
@@ -331,6 +483,23 @@ async function updateStatus(docId, newStatus) {
   } catch (error) {
     console.error('Error updating status:', error);
     showError('Erro ao atualizar status.');
+  }
+}
+
+/**
+ * Deletes a registration permanently
+ */
+async function deleteRegistration(docId, name) {
+  if (!confirm(`Tens a certeza que queres eliminar a inscrição de "${name}"?\n\nEsta ação é irreversível!`)) {
+    return;
+  }
+  
+  try {
+    await db.collection('inscricoes').doc(docId).delete();
+    showSuccess('Inscrição eliminada com sucesso!');
+  } catch (error) {
+    console.error('Error deleting registration:', error);
+    showError('Erro ao eliminar inscrição.');
   }
 }
 
