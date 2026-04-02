@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin-Portal | Festival GA 2026</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <style>
+        .admin-page {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        .admin-wide-container {
+            width: 100%;
+            max-width: 1200px;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(50px);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 3rem;
+            min-height: 60vh;
+        }
+        .table-responsive {
+            overflow-x: auto;
+            margin-top: 3rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        th {
+            font-family: var(--font-logo);
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            color: var(--accent-gold);
+            padding: 1.5rem 1rem;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+        }
+        td {
+            padding: 1.5rem 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.9rem;
+            color: #ddd;
+        }
+        .status-pill {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            background: var(--accent-gold);
+            color: #000;
+            font-weight: 900;
+            font-size: 0.65rem;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body class="admin-page">
+    <div id="loader" class="loader" style="display:none;"></div>
+
+    <div class="background-scene">
+        <img src="70coração.png" class="heart-70-bg" alt="70 Anos Eurovisão" style="opacity: 0.05;">
+        <div class="vienna-pattern"></div>
+    </div>
+
+    <!-- Login Portal -->
+    <div id="login-section" class="glass-card" style="display: none;">
+        <img src="logo-grupo-armindo.png" alt="Grupo Armindo" style="height: 40px; margin-bottom: 2rem;">
+        <h2 class="form-title">Portal de Gestão</h2>
+        <form id="login-form" class="registration-form">
+            <div class="input-block">
+                <input type="password" id="admin-password" class="input-field" placeholder="SENHA DE ACESSO" required>
+            </div>
+            <button type="submit" class="submit-btn">ENTRAR</button>
+        </form>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" class="admin-wide-container" style="display: none;">
+        <header style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 2rem;">
+            <img src="Logo Festival GA da Canção.png" alt="Festival GA da Canção" style="height: 50px;">
+            <button onclick="logout()" class="legal-link" style="background: none; border: 1px solid #444; padding: 0.5rem 1.5rem; cursor: pointer;">SAIR</button>
+        </header>
+
+        <div class="table-responsive">
+            <!-- Deadline Management Section -->
+            <div class="deadline-section" style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+                <h3 style="color: var(--accent-gold); margin-bottom: 1rem;">Gestão de Prazos</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label for="registration-open-date" style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Abertura das Inscrições</label>
+                        <input type="datetime-local" id="registration-open-date" class="input-field" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 0.5rem; border-radius: 4px; color: white;">
+                    </div>
+                    <div>
+                        <label for="registration-deadline" style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Prazo de Inscrição</label>
+                        <input type="datetime-local" id="registration-deadline" class="input-field" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 0.5rem; border-radius: 4px; color: white;">
+                    </div>
+                    <div>
+                        <label for="cancellation-deadline" style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Prazo de Cancelamento</label>
+                        <input type="datetime-local" id="cancellation-deadline" class="input-field" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 0.5rem; border-radius: 4px; color: white;">
+                    </div>
+                </div>
+                <button onclick="saveDeadlines()" class="submit-btn" style="background: var(--accent-gold); color: black; padding: 0.5rem 1.5rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">SALVAR PRAZOS</button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Candidato / Grupo</th>
+                        <th>Discord</th>
+                        <th>Data de Inscrição</th>
+                        <th>Estado</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="registrations-table-body">
+                    <!-- Registrations will appear here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

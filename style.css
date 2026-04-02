@@ -1,0 +1,783 @@
+/* ============================================
+   FESTIVAL GA DA CANÇÃO 2026 - STYLES
+   ============================================ */
+
+/* Custom Font Import */
+@font-face {
+  font-family: 'Singing Sans';
+  src: url('Singing_Sans.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* CSS Variables - Design System */
+:root {
+  --primary-pink: #ff00ff;
+  --secondary-purple: #7a28ff;
+  --accent-gold: #ffcc00;
+  --vienna-black: #050505;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.8);
+  --text-muted: rgba(255, 255, 255, 0.6);
+  --festival-blue: #00f2ff;
+  --festival-pink: #ff00ff;
+  --font-logo: 'Singing Sans', sans-serif;
+  --font-body: 'Montserrat', sans-serif;
+  --transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  --border-radius: 8px;
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
+  --spacing-xxl: 4rem;
+}
+
+/* ============================================
+   RESET & BASE STYLES
+   ============================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--vienna-black);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+/* ============================================
+   BACKGROUND VISUAL SCENE
+   ============================================ */
+
+/* Enhanced Background Scene - Original Style */
+.background-scene {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: -1;
+  overflow: hidden;
+  background: radial-gradient(circle at 75% 40%, #1a0845 0%, #000 100%);
+}
+
+.esc-slants {
+  position: absolute;
+  top: 0;
+  left: -20vw;
+  width: 60vw;
+  height: 100%;
+  display: flex;
+  transform: skewX(-15deg);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.slant {
+  height: 100%;
+  animation: slideInLeft 1.2s ease-out;
+}
+
+.slant-magenta {
+  width: 60%;
+  background: linear-gradient(to bottom, #ff00ff, #7a28ff);
+  opacity: 0.9;
+  box-shadow: 20px 0 80px rgba(0, 0, 0, 0.8);
+}
+
+.slant-purple {
+  width: 40%;
+  background: linear-gradient(to bottom, #7a28ff, #00f2ff);
+  opacity: 0.7;
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-110%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+.heart-70-bg {
+  position: absolute;
+  top: 50%;
+  left: 75%;
+  transform: translate(-50%, -50%);
+  width: 50vw;
+  max-width: 700px;
+  opacity: 0.55;
+  filter: drop-shadow(0 0 50px rgba(122, 40, 255, 0.4));
+  animation: float 12s infinite ease-in-out;
+  pointer-events: none;
+  z-index: 2;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -53%) scale(1.05);
+    opacity: 0.6;
+  }
+}
+
+/* 70th Anniversary Heart Background Light Scene */
+.background-scene {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: -2;
+  overflow: hidden;
+  background: radial-gradient(circle at 75% 40%, #1a0845 0%, #000 100%);
+}
+
+.vienna-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    linear-gradient(rgba(255, 204, 0, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 204, 0, 0.05) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(circle at 75% 40%, black, transparent 80%);
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* ============================================
+   MAIN LAYOUT & CONTENT STRUCTURE
+   ============================================ */
+
+/* Main Layout - Two Column Grid */
+.main-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  flex: 1;
+  min-height: 100vh;
+  gap: 0;
+  position: relative;
+}
+
+/* LEFT SIDE: Visual Brand & Content */
+.visual-branding {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: var(--spacing-xxl) var(--spacing-xxl) var(--spacing-xxl) 10%;
+  text-align: left;
+  min-height: 100vh;
+  position: relative;
+  z-index: 10;
+}
+
+/* RIGHT SIDE: 70 Years Anniversary Visual */
+.visual-anniversary {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Header Section */
+.brand-header {
+  margin-bottom: var(--spacing-xl);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--spacing-lg);
+  animation: fadeInDown 0.8s backwards;
+  position: relative;
+}
+
+.header-divider {
+  width: 1px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.logo-ga {
+  height: 40px;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.4));
+  transition: var(--transition);
+}
+
+.logo-ga:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 15px rgba(255, 204, 0, 0.5));
+}
+
+.event-badge {
+  font-family: var(--font-logo);
+  font-size: 0.9rem;
+  letter-spacing: 3px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.event-date {
+  font-family: var(--font-logo);
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  color: var(--accent-gold);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+/* Content Hero Section */
+.content-hero {
+  animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s backwards;
+  width: 100%;
+  max-width: 600px;
+}
+
+.main-logo-img {
+  width: 100%;
+  max-width: 550px;
+  margin-bottom: var(--spacing-lg);
+  filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.5));
+  transition: var(--transition);
+}
+
+.main-logo-img:hover {
+  transform: translateY(-3px);
+  filter: drop-shadow(0 20px 40px rgba(122, 40, 255, 0.2));
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  max-width: 500px;
+  line-height: 1.6;
+  font-weight: 300;
+  color: var(--text-secondary);
+  border-left: 3px solid var(--accent-gold);
+  padding-left: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+  position: relative;
+}
+
+/* CTA Start Button - Original Style */
+.cta-wrapper {
+  position: relative;
+  margin-top: var(--spacing-xl);
+  z-index: 50;
+}
+
+.cta-start-btn {
+  padding: var(--spacing-sm) var(--spacing-xl);
+  background: var(--accent-gold);
+  color: #000;
+  border: none;
+  font-weight: 900;
+  font-size: 0.75rem;
+  letter-spacing: 3px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  clip-path: polygon(0 0, 100% 0, 100% 70%, 92% 100%, 0 100%);
+}
+
+.cta-start-btn:hover {
+  background: #fff;
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(255, 204, 0, 0.3);
+}
+
+.registration-portal {
+  display: none;
+}
+
+/* ============================================
+   FORM STYLES & INTERACTIVE ELEMENTS
+   ============================================ */
+
+/* Glass Card Container - Original Style */
+.glass-card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(40px);
+  padding: var(--spacing-xl);
+  border-radius: 4px;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Form Header */
+.form-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.form-logo {
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.4));
+  transition: var(--transition);
+}
+
+.form-logo:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 15px rgba(255, 204, 0, 0.5));
+}
+
+/* Form Title */
+.form-title {
+  font-family: var(--font-logo);
+  font-size: 0.8rem;
+  letter-spacing: 4px;
+  color: var(--accent-gold);
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+}
+
+/* Input Block - Original Style */
+.input-block {
+  margin-bottom: 2.5rem;
+}
+
+.input-block label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #fff;
+  margin-bottom: 1rem;
+  opacity: 0.6;
+}
+
+/* Input Field - Original Style */
+.input-field {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  padding: 0.8rem 0;
+  font-size: 1.8rem;
+  font-family: var(--font-logo);
+  color: #fff;
+  outline: none;
+  transition: var(--transition);
+}
+
+.input-field:focus {
+  border-bottom-color: var(--accent-gold);
+}
+
+/* Submit Button - Original Style */
+.submit-btn {
+  width: 100%;
+  padding: 1.5rem;
+  background: #fff;
+  color: #000;
+  border: none;
+  font-weight: 900;
+  font-size: 0.9rem;
+  letter-spacing: 3px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: var(--transition);
+  clip-path: polygon(0 0, 100% 0, 100% 70%, 92% 100%, 0 100%);
+}
+
+.submit-btn:hover {
+  background: var(--accent-gold);
+  transform: translateY(-5px);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 100%);
+}
+
+/* ============================================
+   FOOTER & LEGAL SECTION
+   ============================================ */
+
+/* Footer - Hidden on landing page, shown on register */
+.global-footer {
+  display: none;
+}
+
+.legal-links {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  margin-bottom: 2rem;
+}
+
+.legal-link {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #888;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.legal-link:hover {
+  color: #fff;
+}
+
+.disclaimer-text {
+  max-width: 800px;
+  margin: 0 auto;
+  font-size: 0.65rem;
+  line-height: 1.8;
+  color: #555;
+  font-style: italic;
+}
+
+/* ============================================
+   ANIMATIONS & TRANSITIONS
+   ============================================ */
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ============================================
+   RESPONSIVE DESIGN - MOBILE & TABLET
+   ============================================ */
+
+/* ============================================
+   MOBILE-FIRST PC EXPERIENCE - Smart Structure
+   ============================================ */
+
+@media (max-width: 1100px) {
+  .main-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .visual-branding {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    min-height: 100vh;
+    position: relative;
+    padding: 2rem 1.5rem;
+    box-sizing: border-box;
+  }
+
+  .brand-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0;
+    animation: fadeInDown 0.8s backwards;
+  }
+
+  .logo-ga {
+    height: 40px;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.4));
+  }
+
+  .header-divider {
+    width: 80px;
+    height: 2px;
+    background: var(--accent-gold);
+    opacity: 0.7;
+  }
+
+  .event-badge {
+    font-family: var(--font-logo);
+    font-size: 0.9rem;
+    letter-spacing: 3px;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .event-date {
+    font-family: var(--font-logo);
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    color: var(--accent-gold);
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .content-hero {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+    animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s backwards;
+  }
+
+  .main-logo-img {
+    width: 100%;
+    max-width: 350px;
+    margin-bottom: 2rem;
+    filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.6));
+  }
+
+  .hero-subtitle {
+    font-size: 1.1rem;
+    line-height: 1.5;
+    font-weight: 300;
+    color: var(--text-primary);
+    border: none;
+    padding: 0;
+    margin: 0 auto 2rem auto;
+    text-align: center;
+    max-width: 90%;
+  }
+
+  .cta-wrapper {
+    margin-top: auto;
+    padding-top: 2rem;
+    animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.6s backwards;
+  }
+
+  .cta-start-btn {
+    font-size: 0.75rem;
+    padding: 0.9rem 2.5rem;
+    background: var(--accent-gold);
+    color: #000;
+    border: none;
+    font-weight: 900;
+    letter-spacing: 2.5px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    clip-path: polygon(0 0, 100% 0, 100% 70%, 92% 100%, 0 100%);
+    box-shadow: 0 8px 20px rgba(255, 204, 0, 0.3);
+  }
+
+  .cta-start-btn:hover {
+    background: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(255, 204, 0, 0.4);
+  }
+
+  .esc-slants {
+    width: 120vw;
+    left: -10vw;
+    opacity: 0.25;
+  }
+
+  .heart-70-bg {
+    display: none;
+  }
+
+  .visual-anniversary {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .visual-branding {
+    padding: 1.5rem 1rem;
+  }
+
+  .brand-header {
+    gap: 0.8rem;
+  }
+
+  .logo-ga {
+    height: 35px;
+  }
+
+  .header-divider {
+    width: 60px;
+  }
+
+  .event-badge {
+    font-size: 0.8rem;
+    letter-spacing: 2.5px;
+  }
+
+  .event-date {
+    font-size: 0.7rem;
+    letter-spacing: 1.8px;
+  }
+
+  .content-hero {
+    max-width: 400px;
+  }
+
+  .main-logo-img {
+    max-width: 300px;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .cta-wrapper {
+    padding-top: 1.5rem;
+  }
+
+  .cta-start-btn {
+    font-size: 0.7rem;
+    padding: 0.8rem 2rem;
+    min-width: 180px;
+  }
+
+}
+
+@media (max-width: 480px) {
+  .visual-branding {
+    padding: 1.2rem 0.8rem;
+  }
+
+  .brand-header {
+    gap: 0.6rem;
+  }
+
+  .logo-ga {
+    height: 30px;
+  }
+
+  .header-divider {
+    width: 50px;
+  }
+
+  .event-badge {
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+  }
+
+  .event-date {
+    font-size: 0.65rem;
+    letter-spacing: 1.5px;
+  }
+
+  .content-hero {
+    max-width: 320px;
+  }
+
+  .main-logo-img {
+    max-width: 260px;
+    margin-bottom: 1.2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.95rem;
+    margin-bottom: 1.2rem;
+    line-height: 1.4;
+  }
+
+  .cta-wrapper {
+    padding-top: 1.2rem;
+  }
+
+  .cta-start-btn {
+    font-size: 0.65rem;
+    padding: 0.7rem 1.8rem;
+    min-width: 160px;
+  }
+
+}
+
+@media (max-width: 360px) {
+  .visual-branding {
+    padding: 1rem 0.6rem;
+  }
+
+  .brand-header {
+    gap: 0.5rem;
+  }
+
+  .logo-ga {
+    height: 25px;
+  }
+
+  .event-badge {
+    font-size: 0.7rem;
+    letter-spacing: 1.8px;
+  }
+
+  .event-date {
+    font-size: 0.6rem;
+    letter-spacing: 1.2px;
+  }
+
+  .main-logo-img {
+    max-width: 220px;
+    margin-bottom: 1rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .cta-start-btn {
+    font-size: 0.6rem;
+    padding: 0.6rem 1.5rem;
+    min-width: 140px;
+  }
+}

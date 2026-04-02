@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscrição | Festival GA da Canção 2026</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Register page specific styles */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .register-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+            background: radial-gradient(circle at 75% 40%, #1a0845 0%, #000 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .register-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(255, 204, 0, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 204, 0, 0.05) 1px, transparent 1px);
+            background-size: 60px 60px;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .back-link {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            color: #888;
+            text-decoration: none;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: color 0.3s;
+            z-index: 10;
+        }
+
+        .back-link:hover {
+            color: var(--accent-gold);
+        }
+
+        .register-card {
+            width: 100%;
+            max-width: 480px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(40px);
+            padding: 3rem;
+            border-radius: 4px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 10;
+        }
+
+        .register-footer {
+            display: block !important;
+            width: 100%;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.8);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loader" class="loader" style="display:none;"></div>
+
+    <div class="register-container">
+        <a href="index.html" class="back-link">← VOLTAR</a>
+
+        <div class="register-card">
+            <header class="form-header">
+                <img src="logo-grupo-armindo.png" alt="Grupo Armindo" class="form-logo" style="height: 40px; margin-bottom: 1rem;">
+                <h2 class="form-title">Inscrição Candidato</h2>
+            </header>
+            <form id="registration-form" class="registration-form">
+                <div class="input-block">
+                    <label for="name">NOME COMPLETO OU ARTÍSTICO</label>
+                    <input type="text" id="name" name="name" class="input-field" placeholder="Insere o teu nome"
+                        required autocomplete="off">
+                </div>
+                <div class="input-block">
+                    <label for="discord">UTILIZADOR DISCORD</label>
+                    <input type="text" id="discord" name="discord" class="input-field" placeholder="Ex: @username"
+                        required autocomplete="off">
+                </div>
+
+                <div class="terms-checkbox" style="margin: 1.5rem 0; display: flex; align-items: flex-start; gap: 0.8rem;">
+                    <input type="checkbox" id="accept-terms" name="accept-terms" required style="margin-top: 0.2rem; width: 18px; height: 18px; accent-color: var(--accent-gold);">
+                    <label for="accept-terms" style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4;">
+                        Aceito os <a href="termos.html" target="_blank" style="color: var(--accent-gold); text-decoration: underline;">Termos e Condições</a>, 
+                        <a href="politica-privacidade.html" target="_blank" style="color: var(--accent-gold); text-decoration: underline;">Política de Privacidade</a> e 
+                        <a href="politica-cookies.html" target="_blank" style="color: var(--accent-gold); text-decoration: underline;">Política de Cookies</a>.
+                    </label>
+                </div>
+
+                <button type="submit" class="submit-btn neon-btn">
+                    <span>CONFIRMAR INSCRIÇÃO</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="register-footer global-footer">
+        <nav class="legal-links">
+            <a href="termos.html" class="legal-link">Termos e Condições</a>
+            <a href="politica-privacidade.html" class="legal-link">Política de Privacidade</a>
+            <a href="politica-cookies.html" class="legal-link">Política de Cookies</a>
+        </nav>
+        <p class="disclaimer-text">Este evento e website são uma produção independente do Grupo Armindo e não estão
+            afiliados, associados, autorizados ou de qualquer forma oficialmente ligados à União Europeia de
+            Radiodifusão (EBU). O logótipo da Eurovisão e marcas relacionadas são copyright da EBU.</p>
+        <p class="copyright-text" style="font-size: 0.7rem; margin-top: 1.5rem; opacity: 0.5;">&copy; 2026 Grupo
+            Armindo. Todos os direitos reservados.</p>
+        <a href="admin.html" class="legal-link" style="margin-top: 1rem; display: inline-block;">Portal de Gestão</a>
+    </footer>
+
+    <!-- Audio Element for Success Sound -->
+    <audio id="success-sound" preload="auto">
+        <source src="esc.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

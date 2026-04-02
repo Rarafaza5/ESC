@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Festival GA da Canção 2026 - Inscreve-te para fazer parte da história do Grupo Armindo no palco de Viena 2026">
+    <meta name="keywords" content="Festival GA da Canção, Grupo Armindo, Viena 2026, Eurovisão, inscrição, música">
+    <meta name="author" content="Grupo Armindo">
+    <meta property="og:title" content="Festival GA da Canção 2026">
+    <meta property="og:description" content="Inscreve-te agora para fazer parte da história do Grupo Armindo no palco de 2026">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#7a28ff">
+    <title>Festival GA da Canção 2026 | Inscrições</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Loading Indicator -->
+    <div id="loader" class="loader" role="alert" aria-live="polite" style="display:none;"></div>
+
+    <!-- Background Visual Scene -->
+    <section class="background-scene" aria-hidden="true">
+        <div class="esc-slants">
+            <div class="slant slant-magenta"></div>
+            <div class="slant slant-purple"></div>
+        </div>
+        <img src="70coração.png" class="heart-70-bg" alt="70 Anos Eurovisão">
+        <div class="vienna-pattern"></div>
+    </section>
+
+    <!-- Main Content Container -->
+    <main class="main-wrapper">
+        <!-- Left Column: Visual Branding & Information -->
+        <article class="visual-branding">
+            <header class="brand-header">
+                <img src="logo-grupo-armindo.png" alt="Grupo Armindo" class="logo-ga">
+                <div class="header-divider" aria-hidden="true"></div>
+                <div class="event-badge">VIENA 2026 | 70 ANOS</div>
+                <div class="event-date">16 MAIO | 19:45</div>
+            </header>
+
+            <section class="content-hero">
+                <img src="Logo Festival GA da Canção.png" alt="Festival GA da Canção" class="main-logo-img">
+                <p class="hero-subtitle">Inscreve-te agora para fazer parte da história do Grupo Armindo no palco de
+                    2026. A tua voz, a nossa canção.</p>
+            </section>
+            <div class="cta-wrapper">
+                <button class="cta-start-btn" onclick="window.location.href='register.html'">
+                    <span>COMEÇAR REGISTO</span>
+                </button>
+            </div>
+        </article>
+
+        <!-- Right Column: Reserved for 70 Years Visual -->
+        <aside class="visual-anniversary" aria-hidden="true">
+            <!-- Visual space for 70 years branding -->
+        </aside>
+    </main>
+
+    <!-- Footer with Legal Links -->
+    <footer class="legal-footer" style="
+        background: rgba(0, 0, 0, 0.9);
+        backdrop-filter: blur(10px);
+        padding: 2rem 1.5rem;
+        text-align: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    ">
+        <p class="disclaimer-text" style="color: var(--text-secondary); font-size: 0.75rem; opacity: 0.8; margin-bottom: 0.8rem; max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.5;">
+            Este evento e website são uma produção independente do Grupo Armindo e não estão afiliados, associados, autorizados ou de qualquer forma oficialmente ligados à União Europeia de Radiodifusão (EBU). O logótipo da Eurovisão e marcas relacionadas são copyright da EBU.
+        </p>
+        <p class="copyright-text" style="color: var(--text-secondary); font-size: 0.7rem; opacity: 0.6; margin-bottom: 1rem;">
+            &copy; 2026 Grupo Armindo. Todos os direitos reservados.
+        </p>
+        <nav class="legal-links" style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
+            <a href="termos.html" class="legal-link" style="color: var(--accent-gold); text-decoration: none; font-size: 0.8rem; font-weight: 500;">Termos e Condições</a>
+            <a href="politica-privacidade.html" class="legal-link" style="color: var(--accent-gold); text-decoration: none; font-size: 0.8rem; font-weight: 500;">Política de Privacidade</a>
+            <a href="politica-cookies.html" class="legal-link" style="color: var(--accent-gold); text-decoration: none; font-size: 0.8rem; font-weight: 500;">Política de Cookies</a>
+        </nav>
+    </footer>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
