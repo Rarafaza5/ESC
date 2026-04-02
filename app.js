@@ -204,7 +204,13 @@ function showErrors(errors) {
     errorDiv.innerHTML = errors.map(error => `• ${error}`).join('<br>');
     
     const formTitle = registrationForm.querySelector('.form-title');
-    formTitle.parentNode.insertBefore(errorDiv, formTitle.nextSibling);
+    if (formTitle && formTitle.parentNode) {
+      formTitle.parentNode.insertBefore(errorDiv, formTitle.nextSibling);
+    } else if (registrationForm.firstChild) {
+      registrationForm.insertBefore(errorDiv, registrationForm.firstChild);
+    } else {
+      registrationForm.appendChild(errorDiv);
+    }
   }
 }
 
