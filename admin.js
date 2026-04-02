@@ -392,7 +392,6 @@ function createRegistrationRow(data, docId) {
   
   row.innerHTML = `
     <td style="font-weight: 500;">${escapeHtml(data.name)}</td>
-    <td>${escapeHtml(data.discord || 'N/A')}</td>
     <td>${date}</td>
     <td>
       <span class="status-pill" style="

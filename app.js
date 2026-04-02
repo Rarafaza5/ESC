@@ -6,7 +6,6 @@
 const registrationForm = document.getElementById('registration-form');
 const loader = document.getElementById('loader');
 const nameInput = document.getElementById('name');
-const discordInput = document.getElementById('discord');
 const successSound = document.getElementById('success-sound');
 
 // Registration Configuration
@@ -157,7 +156,7 @@ async function canCancelRegistration() {
 }
 
 // Form Validation
-function validateForm(name, discord) {
+function validateForm(name) {
   const errors = [];
   
   // Name validation
@@ -169,13 +168,6 @@ function validateForm(name, discord) {
     errors.push('O nome não pode ter mais de 100 caracteres');
   } else if (!/^[a-zA-ZÀ-ÿ\s\-']+$/.test(name.trim())) {
     errors.push('O nome apenas pode conter letras, espaços, hífenes e apóstrofes');
-  }
-  
-  // Discord validation
-  if (!discord || discord.trim().length === 0) {
-    errors.push('O utilizador Discord é obrigatório');
-  } else if (!/^@[a-zA-Z0-9_]{2,32}$/.test(discord.trim())) {
-    errors.push('Formato Discord inválido. Use: @username');
   }
   
   return errors;
@@ -217,31 +209,17 @@ function showErrors(errors) {
 // Real-time validation
 if (nameInput) {
   nameInput.addEventListener('input', () => {
-    const discordValue = discordInput ? discordInput.value : '';
-    const errors = validateForm(nameInput.value, discordValue);
+    const errors = validateForm(nameInput.value);
     showErrors(errors);
   });
 }
 
-if (discordInput) {
-  discordInput.addEventListener('input', () => {
-    const nameValue = nameInput ? nameInput.value : '';
-    const errors = validateForm(nameValue, discordInput.value);
-    showErrors(errors);
-  });
-}
-
-// Play success sound and redirect to Discord
-function playSuccessAndRedirect() {
+// Play success sound
+function playSuccessSound() {
   // Play success sound
   if (successSound) {
     successSound.play().catch(e => console.log('Audio play failed:', e));
   }
-  
-  // Redirect to Discord after a short delay
-  setTimeout(() => {
-    window.open('https://discord.gg/2ZFBQAPsDk', '_blank');
-  }, 1000);
 }
 
 // Form submission handler
@@ -267,8 +245,7 @@ if (registrationForm) {
     
     // Validate form
     const name = document.getElementById('name').value;
-    const discord = document.getElementById('discord').value;
-    const errors = validateForm(name, discord);
+    const errors = validateForm(name);
     
     if (errors.length > 0) {
       showErrors(errors);
@@ -287,7 +264,6 @@ if (registrationForm) {
 
     const formData = {
       name: name.trim(),
-      discord: discord.trim(),
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       status: 'pendente'
     };
@@ -296,27 +272,20 @@ if (registrationForm) {
       // Save to Firestore
       await db.collection('inscricoes').add(formData);
       
-      // Success Feedback with Discord redirect
+      // Success Feedback
       registrationForm.innerHTML = `
         <div class="success-msg" style="text-align: center; animation: fadeInUp 0.8s;">
           <h2 style="font-size: 2rem; margin-bottom: 1rem; color: var(--accent-gold);">Inscrição Confirmada!</h2>
-          <p style="font-size: 1.1rem; margin-bottom: 1rem; line-height: 1.6;">Obrigado, ${formData.name}!</p>
-          <p style="font-size: 1rem; margin-bottom: 2rem; line-height: 1.6;">A tua inscrição foi registada com sucesso. Serás redirecionado para o nosso Discord em breve...</p>
-          <div style="margin: 2rem 0;">
-            <button onclick="playSuccessAndRedirect()" class="submit-btn" style="margin: 0 auto; display: block; background: var(--accent-gold);">
-              <span>ENTRAR NO DISCORD AGORA</span>
-            </button>
-          </div>
+          <p style="font-size: 1.1rem; margin-bottom: 2rem; line-height: 1.6;">Obrigado, ${formData.name}!</p>
+          <p style="font-size: 1rem; margin-bottom: 2rem; line-height: 1.6;">A tua inscrição foi registada com sucesso.</p>
           <button onclick="location.reload()" class="submit-btn" style="margin: 1rem auto 0; display: block; background: rgba(255,255,255,0.1);">
             <span>NOVA INSCRIÇÃO</span>
           </button>
         </div>
       `;
       
-      // Auto-redirect after 3 seconds
-      setTimeout(() => {
-        playSuccessAndRedirect();
-      }, 3000);
+      // Play success sound
+      playSuccessSound();
       
     } catch (error) {
       console.error("Erro na inscrição: ", error);
