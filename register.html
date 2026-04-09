@@ -4,6 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Festival GA da Canção 2026 - Formulário de Inscrição">
+    <meta property="og:title" content="Inscrição - Festival GA da Canção 2026">
+    <meta property="og:description"
+        content="Preenche o formulário para te inscreveres na edição de 2026. A tua voz, a nossa canção.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="Logo Festival GA da Canção.png">
+    <meta name="theme-color" content="#ffcc00">
     <title>Inscrição | Festival GA da Canção 2026</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -88,6 +95,7 @@
                 opacity: 0;
                 transform: translateY(50px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -104,22 +112,25 @@
 
         <div class="register-card">
             <header class="form-header">
-                <img src="logo-grupo-armindo.png" alt="Grupo Armindo" class="form-logo" style="height: 40px; margin-bottom: 1rem;">
+                <img src="logo-grupo-armindo.png" alt="Grupo Armindo" class="form-logo"
+                    style="height: 40px; margin-bottom: 1rem;">
                 <h2 class="form-title">Inscrição Candidato</h2>
             </header>
             <form id="registration-form" class="registration-form">
                 <div class="input-block">
-                    <label for="name">NOME COMPLETO OU ARTÍSTICO</label>
-                    <input type="text" id="name" name="name" class="input-field" placeholder="Insere o teu nome"
+                    <label for="name">NOME E APELIDO</label>
+                    <input type="text" id="name" name="name" class="input-field" placeholder="Ex: Salvador Sobral"
                         required autocomplete="off">
                 </div>
 
-                <div class="terms-checkbox" style="margin: 1.5rem 0; display: flex; align-items: flex-start; gap: 0.8rem;">
-                    <input type="checkbox" id="accept-terms" name="accept-terms" required style="margin-top: 0.2rem; width: 18px; height: 18px; accent-color: var(--accent-gold);">
-                    <label for="accept-terms" style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4;">
-                        Aceito os <a href="termos.html" target="_blank" style="color: var(--accent-gold); text-decoration: underline;">Termos e Condições</a>, 
-                        <a href="politica-privacidade.html" target="_blank" style="color: var(--accent-gold); text-decoration: underline;">Política de Privacidade</a> e 
-                        <a href="politica-cookies.html" target="_blank" style="color: var(--accent-gold); text-decoration: underline;">Política de Cookies</a>.
+                <div class="terms-checkbox"
+                    style="margin: 1.5rem 0; display: flex; align-items: flex-start; gap: 0.8rem;">
+                    <input type="checkbox" id="accept-terms" name="accept-terms" required
+                        style="margin-top: 0.2rem; width: 18px; height: 18px; accent-color: var(--accent-gold);">
+                    Aceito os <a href="termos.html" target="_blank"
+                        style="color: var(--accent-gold); text-decoration: underline;">Termos e Condições</a> e
+                    <a href="politica-privacidade.html" target="_blank"
+                        style="color: var(--accent-gold); text-decoration: underline;">Política de Privacidade</a>.
                     </label>
                 </div>
 
@@ -134,7 +145,6 @@
         <nav class="legal-links">
             <a href="termos.html" class="legal-link">Termos e Condições</a>
             <a href="politica-privacidade.html" class="legal-link">Política de Privacidade</a>
-            <a href="politica-cookies.html" class="legal-link">Política de Cookies</a>
         </nav>
         <p class="disclaimer-text">Este evento e website são uma produção independente do Grupo Armindo e não estão
             afiliados, associados, autorizados ou de qualquer forma oficialmente ligados à União Europeia de

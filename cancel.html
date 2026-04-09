@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cancelar Inscrição - Festival GA da Canção 2026</title>
+    <meta name="description" content="Festival GA da Canção 2026 - Cancelamento de Inscrição">
+    <title>Cancelar Inscrição | Festival GA da Canção 2026</title>
     <link rel="stylesheet" href="style.css">
     <style>
         .cancel-container {
@@ -16,7 +18,7 @@
             position: relative;
             z-index: 10;
         }
-        
+
         .cancel-card {
             background: var(--glass-bg);
             backdrop-filter: blur(40px);
@@ -27,20 +29,20 @@
             width: 100%;
             text-align: center;
         }
-        
+
         .cancel-card h2 {
             color: var(--accent-gold);
             font-family: var(--font-logo);
             font-size: 1.8rem;
             margin-bottom: 0.5rem;
         }
-        
+
         .cancel-card .subtitle {
             color: var(--text-secondary);
             font-size: 0.9rem;
             margin-bottom: 2rem;
         }
-        
+
         .back-link {
             position: absolute;
             top: 2rem;
@@ -51,35 +53,35 @@
             opacity: 0.7;
             transition: opacity 0.3s;
         }
-        
+
         .back-link:hover {
             opacity: 1;
         }
-        
+
         .cancel-status {
             padding: 1rem;
             border-radius: 8px;
             margin-bottom: 1.5rem;
             font-weight: 600;
         }
-        
+
         .cancel-status.open {
             background: rgba(40, 167, 69, 0.15);
             color: #28a745;
             border: 2px solid #28a745;
         }
-        
+
         .cancel-status.closed {
             background: rgba(220, 53, 69, 0.15);
             color: #dc3545;
             border: 2px solid #dc3545;
         }
-        
+
         .input-block {
             margin-bottom: 1.5rem;
             text-align: left;
         }
-        
+
         .input-block label {
             display: block;
             color: var(--text-secondary);
@@ -88,7 +90,7 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        
+
         .input-block input {
             width: 100%;
             background: rgba(255, 255, 255, 0.05);
@@ -98,12 +100,12 @@
             color: white;
             font-size: 1rem;
         }
-        
+
         .input-block input:focus {
             outline: none;
             border-color: var(--accent-gold);
         }
-        
+
         .btn-cancel {
             background: #dc3545;
             color: white;
@@ -116,29 +118,29 @@
             width: 100%;
             transition: all 0.3s;
         }
-        
+
         .btn-cancel:hover {
             background: #c82333;
         }
-        
+
         .btn-cancel:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-        
+
         .result-message {
             margin-top: 1.5rem;
             padding: 1rem;
             border-radius: 8px;
             font-weight: 500;
         }
-        
+
         .result-message.success {
             background: rgba(40, 167, 69, 0.15);
             color: #28a745;
             border: 1px solid #28a745;
         }
-        
+
         .confirmation-box {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -147,16 +149,16 @@
             margin: 1.5rem 0;
             text-align: left;
         }
-        
+
         .confirmation-box p {
             margin-bottom: 0.8rem;
             font-size: 0.95rem;
         }
-        
+
         .confirmation-box strong {
             color: var(--accent-gold);
         }
-        
+
         .btn-search {
             background: var(--accent-gold);
             color: black;
@@ -169,11 +171,11 @@
             width: 100%;
             transition: all 0.3s;
         }
-        
+
         .btn-search:hover {
             background: #e6c200;
         }
-        
+
         .btn-confirm {
             background: #dc3545;
             color: white;
@@ -186,11 +188,11 @@
             width: 48%;
             transition: all 0.3s;
         }
-        
+
         .btn-confirm:hover {
             background: #c82333;
         }
-        
+
         .btn-back {
             background: rgba(255, 255, 255, 0.1);
             color: white;
@@ -203,62 +205,64 @@
             width: 48%;
             transition: all 0.3s;
         }
-        
+
         .btn-back:hover {
             background: rgba(255, 255, 255, 0.2);
         }
-        
+
         .button-group {
             display: flex;
             justify-content: space-between;
             gap: 1rem;
         }
-        
+
         .step-2 {
             display: none;
         }
     </style>
 </head>
+
 <body>
     <a href="index.html" class="back-link">← VOLTAR</a>
-    
+
     <div class="cancel-container">
         <div class="cancel-card">
             <h2>Cancelar Inscrição</h2>
-            
+
             <div id="cancel-status" class="cancel-status" style="display: none;">
                 A verificar prazo...
             </div>
-            
+
             <!-- PASSO 1: Pesquisar -->
             <div id="step-1">
                 <p class="subtitle">Introduz o teu nome para encontrar a inscrição</p>
-                
+
                 <form id="search-form">
                     <div class="input-block">
-                        <label for="search-name">NOME COMPLETO</label>
-                        <input type="text" id="search-name" name="search-name" placeholder="Ex: João Silva" required autocomplete="off">
+                        <label for="search-name">NOME E APELIDO</label>
+                        <input type="text" id="search-name" name="search-name" placeholder="Ex: Salvador Sobral"
+                            required autocomplete="off">
                     </div>
-                    
+
                     <button type="submit" class="btn-search" id="search-btn">
                         PROCURAR INSCRIÇÃO
                     </button>
                 </form>
             </div>
-            
+
             <!-- PASSO 2: Confirmar -->
             <div id="step-2" class="step-2">
                 <p class="subtitle">Confirma os dados da inscrição</p>
-                
+
                 <div class="confirmation-box">
                     <p><strong>Nome:</strong> <span id="confirm-name"></span></p>
                     <p><strong>Data de inscrição:</strong> <span id="confirm-date"></span></p>
                 </div>
-                
+
                 <p style="color: #dc3545; font-weight: 600; margin-bottom: 1rem;">
                     ⚠️ Tens a certeza que queres cancelar esta inscrição?
                 </p>
-                
+
                 <div class="button-group">
                     <button type="button" class="btn-back" onclick="goBack()">
                         ← VOLTAR
@@ -268,11 +272,11 @@
                     </button>
                 </div>
             </div>
-            
+
             <div id="result-message"></div>
         </div>
     </div>
-    
+
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="firebase-config.js"></script>
@@ -281,7 +285,7 @@
         let isCancellationAllowed = false;
         let foundRegistrationId = null;
         let foundRegistrationData = null;
-        
+
         // Check cancellation status on load
         async function checkCancellationStatus() {
             try {
@@ -289,10 +293,10 @@
                 if (configDoc.exists) {
                     const data = configDoc.data();
                     cancelDate = data.cancelDate?.toDate();
-                    
+
                     const statusEl = document.getElementById('cancel-status');
                     statusEl.style.display = 'block';
-                    
+
                     if (cancelDate) {
                         const now = new Date();
                         if (now <= cancelDate) {
@@ -316,37 +320,37 @@
                 console.error('Error checking cancellation status:', error);
             }
         }
-        
+
         // Handle search form submission
         document.getElementById('search-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             if (!isCancellationAllowed) {
                 showResult('O prazo de cancelamento terminou.', 'error');
                 return;
             }
-            
+
             const searchName = document.getElementById('search-name').value.trim();
             if (!searchName) {
                 showResult('Por favor, introduz o teu nome.', 'error');
                 return;
             }
-            
+
             const btn = document.getElementById('search-btn');
             btn.disabled = true;
             btn.textContent = 'A PROCURAR...';
-            
+
             try {
                 // Search by name (case-insensitive search)
                 const snapshot = await db.collection('inscricoes')
                     .where('name', '==', searchName)
                     .get();
-                
+
                 if (snapshot.empty) {
                     // Try partial match
                     const allSnapshot = await db.collection('inscricoes').get();
                     let found = false;
-                    
+
                     allSnapshot.forEach(doc => {
                         const data = doc.data();
                         if (data.name && data.name.toLowerCase() === searchName.toLowerCase()) {
@@ -355,7 +359,7 @@
                             foundRegistrationData = data;
                         }
                     });
-                    
+
                     if (!found) {
                         showResult('❌ Inscrição não encontrada. Verifica o nome introduzido.', 'error');
                         btn.disabled = false;
@@ -368,7 +372,7 @@
                         foundRegistrationData = doc.data();
                     });
                 }
-                
+
                 // Check if already cancelled
                 if (foundRegistrationData.status === 'cancelado') {
                     showResult('❌ Esta inscrição já foi cancelada anteriormente.', 'error');
@@ -376,10 +380,10 @@
                     btn.textContent = 'PROCURAR INSCRIÇÃO';
                     return;
                 }
-                
+
                 // Show confirmation step
                 showConfirmation();
-                
+
             } catch (error) {
                 console.error('Error searching registration:', error);
                 showResult('❌ Erro ao procurar inscrição. Tenta novamente.', 'error');
@@ -388,24 +392,24 @@
                 btn.textContent = 'PROCURAR INSCRIÇÃO';
             }
         });
-        
+
         function showConfirmation() {
             // Hide step 1, show step 2
             document.getElementById('step-1').style.display = 'none';
             document.getElementById('step-2').style.display = 'block';
-            
+
             // Fill confirmation data
             document.getElementById('confirm-name').textContent = foundRegistrationData.name || 'N/A';
-            
+
             // Format date
             let dateStr = 'N/A';
             if (foundRegistrationData.timestamp) {
                 const date = foundRegistrationData.timestamp.toDate();
-                dateStr = date.toLocaleDateString('pt-PT') + ' ' + date.toLocaleTimeString('pt-PT', {hour: '2-digit', minute:'2-digit'});
+                dateStr = date.toLocaleDateString('pt-PT') + ' ' + date.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
             }
             document.getElementById('confirm-date').textContent = dateStr;
         }
-        
+
         function goBack() {
             // Hide step 2, show step 1
             document.getElementById('step-2').style.display = 'none';
@@ -415,33 +419,33 @@
             document.getElementById('result-message').textContent = '';
             document.getElementById('result-message').className = '';
         }
-        
+
         async function confirmCancel() {
             if (!foundRegistrationId) {
                 showResult('Erro: Nenhuma inscrição selecionada.', 'error');
                 return;
             }
-            
+
             const btn = document.getElementById('confirm-btn');
             btn.disabled = true;
             btn.textContent = 'A CANCELAR...';
-            
+
             try {
                 // Update status to cancelled
                 await db.collection('inscricoes').doc(foundRegistrationId).update({
                     status: 'cancelado',
                     cancelledAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                
+
                 showResult('✅ Inscrição cancelada com sucesso!', 'success');
-                
+
                 // Hide confirmation buttons and show back button
                 document.querySelector('.button-group').innerHTML = `
                     <button type="button" class="btn-back" onclick="location.href='index.html'" style="width: 100%;">
                         ← VOLTAR À PÁGINA INICIAL
                     </button>
                 `;
-                
+
             } catch (error) {
                 console.error('Error cancelling registration:', error);
                 showResult('❌ Erro ao cancelar inscrição. Tenta novamente.', 'error');
@@ -449,15 +453,16 @@
                 btn.textContent = 'CONFIRMAR CANCELAMENTO';
             }
         }
-        
+
         function showResult(message, type) {
             const resultEl = document.getElementById('result-message');
             resultEl.className = `result-message ${type}`;
             resultEl.textContent = message;
         }
-        
+
         // Check status on page load
         checkCancellationStatus();
     </script>
 </body>
+
 </html>

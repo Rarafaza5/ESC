@@ -9,7 +9,7 @@ const nameInput = document.getElementById('name');
 const successSound = document.getElementById('success-sound');
 
 // Registration Configuration
-let isRegistrationOpen = false;
+let registrationMode = 'closed'; // 'open', 'closed', 'auto'
 let openDate = null;
 let closeDate = null;
 let cancelDate = null;
@@ -20,7 +20,7 @@ async function loadRegistrationStatus() {
     const configDoc = await db.collection('config').doc('registration').get();
     if (configDoc.exists) {
       const data = configDoc.data();
-      isRegistrationOpen = data.isOpen || false;
+      registrationMode = data.mode || (data.isOpen ? 'auto' : 'closed');
       openDate = data.openDate?.toDate() || null;
       closeDate = data.closeDate?.toDate() || null;
       cancelDate = data.cancelDate?.toDate() || null;
@@ -35,14 +35,19 @@ async function loadRegistrationStatus() {
 function checkRegistrationStatus() {
   const now = new Date();
   
-  // Check if manually closed first
-  if (!isRegistrationOpen) {
+  // 1. Manually Closed (Strict Override)
+  if (registrationMode === 'closed') {
     let message = 'As inscrições estão temporariamente fechadas.';
     disableRegistrationForm(message, true);
     return;
   }
   
-  // If open, check opening date (if set and in future, show countdown)
+  // 2. Always Open (Strict Override)
+  if (registrationMode === 'open') {
+      return; // Do nothing, allowing form to stay active forever
+  }
+  
+  // 3. Auto Mode (Check dates)
   if (openDate && openDate > now) {
     const daysUntil = Math.ceil((openDate - now) / (1000 * 60 * 60 * 24));
     const hoursUntil = Math.ceil((openDate - now) / (1000 * 60 * 60));
@@ -110,6 +115,18 @@ function showDeadlineWarning(message) {
 
 // Disable registration form when deadline passed or not yet opened
 function disableRegistrationForm(message, isPreOpening = false) {
+  // Try to update index button if we are on index.html
+  const indexStartBtn = document.getElementById('index-start-btn');
+  if (indexStartBtn) {
+    indexStartBtn.disabled = true;
+    const titleText = isPreOpening ? 'EM BREVE' : 'FECHADO';
+    indexStartBtn.innerHTML = `<span><span style="font-size:0.7em;">${titleText}</span><br>COMEÇAR REGISTO</span>`;
+    indexStartBtn.style.background = '#333';
+    indexStartBtn.style.color = '#fff';
+    indexStartBtn.style.opacity = '0.7';
+    indexStartBtn.style.cursor = 'not-allowed';
+  }
+
   if (registrationForm) {
     // Disable all inputs
     const inputs = registrationForm.querySelectorAll('input, button');
@@ -184,14 +201,18 @@ function showErrors(errors) {
     const errorDiv = document.createElement('div');
     errorDiv.className = 'validation-error';
     errorDiv.style.cssText = `
-      background: rgba(255, 0, 0, 0.1);
-      border: 1px solid rgba(255, 0, 0, 0.3);
+      background: rgba(220, 53, 69, 0.15);
+      border: 1px solid rgba(220, 53, 69, 0.5);
       color: #ff6b6b;
-      padding: 1rem;
-      margin-bottom: 1.5rem;
-      border-radius: 4px;
-      font-size: 0.9rem;
+      padding: 1rem 1.5rem;
+      margin-bottom: 2rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 500;
       text-align: center;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      animation: fadeInDown 0.4s ease-out;
     `;
     errorDiv.innerHTML = errors.map(error => `• ${error}`).join('<br>');
     
@@ -222,25 +243,37 @@ function playSuccessSound() {
   }
 }
 
+// Initialize check once DOM loads (for pages that don't have form but still need status like index.html)
+document.addEventListener('DOMContentLoaded', () => {
+    // We already load status here
+    loadRegistrationStatus();
+});
+
 // Form submission handler
 if (registrationForm) {
-  // Load registration status when page loads
-  loadRegistrationStatus();
-  
   registrationForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    // Check if registrations are open
-    if (!isRegistrationOpen) {
+    // Check strict mode closes completely
+    if (registrationMode === 'closed') {
       showErrors(['As inscrições estão fechadas no momento.']);
       return;
     }
     
-    // Check closing date (optional)
-    const now = new Date();
-    if (closeDate && now > closeDate) {
-      showErrors(['O prazo de inscrição terminou. Não é mais possível realizar inscrições.']);
-      return;
+    // Check auto mode restrictions
+    if (registrationMode === 'auto') {
+        const now = new Date();
+        
+        // Check if opening date exists and hasn't arrived
+        if (openDate && now < openDate) {
+          showErrors(['As inscrições abrem futuramente.']);
+          return;
+        }
+        
+        if (closeDate && now > closeDate) {
+          showErrors(['O prazo de inscrição terminou. Não é mais possível realizar inscrições.']);
+          return;
+        }
     }
     
     // Validate form

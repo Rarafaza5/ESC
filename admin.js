@@ -15,7 +15,7 @@ const AUTH_SESSION_KEY = 'ga_admin_auth';
 
 // State Management
 let isAuthenticated = sessionStorage.getItem(AUTH_SESSION_KEY) === 'true';
-let isRegistrationOpen = false;
+let registrationMode = 'closed'; // 'open', 'closed', 'auto'
 let openDate = null;
 let closeDate = null;
 let cancelDate = null;
@@ -96,14 +96,18 @@ function showError(message) {
   const errorDiv = document.createElement('div');
   errorDiv.className = 'admin-error';
   errorDiv.style.cssText = `
-    background: rgba(255, 0, 0, 0.1);
-    border: 1px solid rgba(255, 0, 0, 0.3);
+    background: rgba(220, 53, 69, 0.15);
+    border: 1px solid rgba(220, 53, 69, 0.5);
     color: #ff6b6b;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-    border-radius: 4px;
-    font-size: 0.9rem;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
     text-align: center;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    animation: fadeInDown 0.4s ease-out;
   `;
   errorDiv.textContent = message;
   
@@ -142,13 +146,15 @@ async function loadRegistrationStatus() {
     const configDoc = await db.collection('config').doc('registration').get();
     if (configDoc.exists) {
       const data = configDoc.data();
-      isRegistrationOpen = data.isOpen || false;
-      openDate = data.openDate || null;
-      closeDate = data.closeDate || null;
-      cancelDate = data.cancelDate || null;
+      // Legacy support: if mode isn't present, fall back to evaluating isOpen
+      registrationMode = data.mode || (data.isOpen ? 'auto' : 'closed');
+      
+      openDate = data.openDate?.toDate() || null;
+      closeDate = data.closeDate?.toDate() || null;
+      cancelDate = data.cancelDate?.toDate() || null;
       updateStatusUI();
     } else {
-      isRegistrationOpen = false;
+      registrationMode = 'closed';
       updateStatusUI();
     }
   } catch (error) {
@@ -167,28 +173,60 @@ function updateStatusUI() {
   
   // Update status display
   if (statusEl) {
-    if (isRegistrationOpen) {
-      statusEl.textContent = '🔓 INSCRIÇÕES ABERTAS';
+    const now = new Date();
+    
+    if (registrationMode === 'closed') {
+      statusEl.textContent = '🔒 INSCRIÇÕES FECHADAS (Manual)';
+      statusEl.style.background = 'rgba(220, 53, 69, 0.2)';
+      statusEl.style.color = '#dc3545';
+      statusEl.style.border = '2px solid #dc3545';
+    } else if (registrationMode === 'open') {
+      statusEl.textContent = '🔓 INSCRIÇÕES ABERTAS (Sempre Aberto)';
       statusEl.style.background = 'rgba(40, 167, 69, 0.2)';
       statusEl.style.color = '#28a745';
       statusEl.style.border = '2px solid #28a745';
     } else {
-      statusEl.textContent = '🔒 INSCRIÇÕES FECHADAS';
-      statusEl.style.background = 'rgba(220, 53, 69, 0.2)';
-      statusEl.style.color = '#dc3545';
-      statusEl.style.border = '2px solid #dc3545';
+      // mode represents 'auto'
+      if (openDate && openDate > now) {
+        statusEl.textContent = '⏳ AGUARDA ABERTURA (Modo Automático)';
+        statusEl.style.background = 'rgba(255, 204, 0, 0.2)';
+        statusEl.style.color = 'var(--accent-gold)';
+        statusEl.style.border = '2px solid var(--accent-gold)';
+      } else if (closeDate && closeDate < now) {
+        statusEl.textContent = '⏰ PRAZO ENCERRADO (Modo Automático)';
+        statusEl.style.background = 'rgba(220, 53, 69, 0.2)';
+        statusEl.style.color = '#dc3545';
+        statusEl.style.border = '2px solid #dc3545';
+      } else {
+        statusEl.textContent = '🟢 INSCRIÇÕES ATIVAS (Modo Automático)';
+        statusEl.style.background = 'rgba(40, 167, 69, 0.2)';
+        statusEl.style.color = '#28a745';
+        statusEl.style.border = '2px solid #28a745';
+      }
     }
   }
   
+  // Update Toggle Switch UI
+  const radioInput = document.getElementById(`mode-${registrationMode}`);
+  if (radioInput && !radioInput.checked) {
+      radioInput.checked = true;
+  }
+
+  // Helper function to format Date object perfectly to datetime-local input
+  const formatLocal = (d) => {
+    const pad = (n) => (n < 10 ? '0' + n : n);
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
+
   // Update date inputs
   if (openDateEl && openDate && openDate instanceof Date && !isNaN(openDate)) {
-    openDateEl.value = openDate.toISOString().slice(0, 16);
+    openDateEl.value = formatLocal(openDate);
   }
   if (closeDateEl && closeDate && closeDate instanceof Date && !isNaN(closeDate)) {
-    closeDateEl.value = closeDate.toISOString().slice(0, 16);
+    closeDateEl.value = formatLocal(closeDate);
   }
   if (cancelDateEl && cancelDate && cancelDate instanceof Date && !isNaN(cancelDate)) {
-    cancelDateEl.value = cancelDate.toISOString().slice(0, 16);
+    cancelDateEl.value = formatLocal(cancelDate);
   }
 }
 
@@ -198,16 +236,26 @@ function updateStatusUI() {
 async function saveOpenDate() {
   try {
     const value = document.getElementById('open-date').value;
+    const newOpenDate = value ? new Date(value) : null;
+    
+    let newMode = registrationMode;
+    if (newOpenDate && registrationMode === 'closed') {
+        newMode = 'auto'; // automatically switch to auto instead of strict closed
+    }
+
     await db.collection('config').doc('registration').set({
-      isOpen: isRegistrationOpen,
-      openDate: value ? new Date(value) : null,
+      mode: newMode,
+      isOpen: newMode !== 'closed', // For retrocompatibility
+      openDate: newOpenDate,
       closeDate: closeDate,
       cancelDate: cancelDate,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
     
-    openDate = value ? new Date(value) : null;
-    showSuccess('Data de abertura guardada!');
+    openDate = newOpenDate;
+    registrationMode = newMode;
+    updateStatusUI();
+    showSuccess('Data guardada. Verifique o Modo!');
   } catch (error) {
     console.error('Error saving open date:', error);
     showError('Erro ao guardar data de abertura.');
@@ -259,46 +307,28 @@ async function saveCancelDate() {
 }
 
 /**
- * Opens registrations manually
+ * Centralized Manual Control set function
  */
-async function openRegistrations() {
+async function setRegistrationMode(mode) {
   try {
     await db.collection('config').doc('registration').set({
-      isOpen: true,
+      mode: mode,
+      isOpen: mode !== 'closed', // Fallback retrocompatibility
       openDate: openDate,
       closeDate: closeDate,
       cancelDate: cancelDate,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
     
-    isRegistrationOpen = true;
+    registrationMode = mode;
     updateStatusUI();
-    showSuccess('Inscrições abertas com sucesso!');
-  } catch (error) {
-    console.error('Error opening registrations:', error);
-    showError('Erro ao abrir inscrições.');
-  }
-}
-
-/**
- * Closes registrations manually
- */
-async function closeRegistrations() {
-  try {
-    await db.collection('config').doc('registration').set({
-      isOpen: false,
-      openDate: openDate,
-      closeDate: closeDate,
-      cancelDate: cancelDate,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
     
-    isRegistrationOpen = false;
-    updateStatusUI();
-    showSuccess('Inscrições fechadas com sucesso!');
+    if (mode === 'open') showSuccess('Modo SEMPRE ABERTO ativado. As datas serão ignoradas.');
+    if (mode === 'closed') showSuccess('Modo FECHADO ativado. O sistema está bloqueado.');
+    if (mode === 'auto') showSuccess('Modo AUTO ativado. As datas ditam as regras.');
   } catch (error) {
-    console.error('Error closing registrations:', error);
-    showError('Erro ao fechar inscrições.');
+    console.error('Error setting registration mode:', error);
+    showError('Erro ao alterar o modo de operações.');
   }
 }
 
@@ -314,14 +344,18 @@ function showSuccess(message) {
   const successDiv = document.createElement('div');
   successDiv.className = 'admin-success';
   successDiv.style.cssText = `
-    background: rgba(40, 167, 69, 0.1);
-    border: 1px solid rgba(40, 167, 69, 0.3);
+    background: rgba(40, 167, 69, 0.15);
+    border: 1px solid rgba(40, 167, 69, 0.5);
     color: #28a745;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-    border-radius: 4px;
-    font-size: 0.9rem;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
     text-align: center;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    animation: fadeInDown 0.4s ease-out;
   `;
   successDiv.textContent = message;
   
